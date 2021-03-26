@@ -1,0 +1,37 @@
+{
+  "name": "skelly.xyz",
+  "version": "1.0.0",
+  "description": "Skelly.xyz website",
+  "main": "app.js",
+  "scripts": {
+    "cssdev": "npx postcss src/resources/*.css -d public/resources/",
+    "cssprod": "cross-env NODE_ENV=production npx postcss src/resources/*.css -d public/resources/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vtheskeleton/skelly.xyz.git"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "Skelly",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vtheskeleton/skelly.xyz/issues"
+  },
+  "homepage": "https://github.com/vtheskeleton/skelly.xyz#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.2.5",
+    "postcss": "^8.2.8",
+    "tailwindcss": "^2.0.4"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "passport": "^0.4.1",
+    "passport-discord": "^0.1.4",
+    "postcss-cli": "^8.3.1"
+  }
+}

@@ -1,0 +1,28 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./resources/style.css" rel="stylesheet">
+    <link rel="icon" type="image/png" id="randomizedFavicon" />
+    <title>Skelly!</title>
+</head>
+<body class="bg-gray-800 text-white">
+    
+ <div class=" bg-gray-900  w-full">
+    <nav class="flex justify-between">
+        <div>
+            <a href="#"><img id="vukmojiRandomization" class="max-h-10 m-2" /></a>
+        </div>
+        <script>
+            document.getElementById("vukmojiRandomization").src = "https://sivusto.tk/innervukky/" + Math.floor(Math.random() * (39 - 1 + 1) + 1) + ".png";
+            document.getElementById("randomizedFavicon").href = "https://sivusto.tk/innervukky/" + Math.floor(Math.random() * (39 - 1 + 1) + 1) + ".png";
+        </script>
+        <ul class="flex flex-row p-5">
+            <!-- <li class="pr-5"><a> Services </a></li>
+            <li class="pr-5"><a>Porfolio</a></li>
+            <li class="pr-5"><a>About</a></li> -->
+            <li><a href="/login">Log In</a></li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>
