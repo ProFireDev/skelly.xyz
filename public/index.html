@@ -13,8 +13,9 @@
             <a href="#"><img id="vukmojiRandomization" class="max-h-10 m-2" /></a>
         </div>
         <script>
-            document.getElementById("vukmojiRandomization").src = "https://sivusto.tk/innervukky/" + Math.floor(Math.random() * (39 - 1 + 1) + 1) + ".png";
-            document.getElementById("randomizedFavicon").href = "https://sivusto.tk/innervukky/" + Math.floor(Math.random() * (39 - 1 + 1) + 1) + ".png";
+            let id = Math.floor(Math.random() * (39 - 1 + 1) + 1)
+                    document.getElementById("vukmojiRandomization").src = `https://sivusto.tk/innervukky/${id}.png`;
+                    document.getElementById("randomizedFavicon").href = `https://sivusto.tk/innervukky/${id}.png`;
         </script>
         <ul class="flex flex-row p-5">
             <!-- <li class="pr-5"><a> Services </a></li>

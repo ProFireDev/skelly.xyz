@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "cssdev": "npx postcss src/resources/*.css -d public/resources/",
-    "cssprod": "cross-env NODE_ENV=production npx postcss src/resources/*.css -d public/resources/"
+    "cssprod": "cross-env NODE_ENV=production npx postcss src/resources/*.css -d public/resources/",
+    "cert": "certbot renew"
   },
   "repository": {
     "type": "git",
@@ -30,8 +31,10 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "mongoose": "^5.12.2",
     "passport": "^0.4.1",
     "passport-discord": "^0.1.4",
+    "passport-github": "^1.1.0",
     "postcss-cli": "^8.3.1"
   }
 }
