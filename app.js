@@ -9,6 +9,7 @@ var RedditStrategy = require('passport-reddit').Strategy;
 var StackExchangeStrategy = require('passport-stack-exchange');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var db = require('./db')
+var fetch = require("node-fetch")
 require("dotenv").config();
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -38,15 +39,27 @@ passport.use(new GitHubStrategy({
     scope: ["user:email"]
   },
   function(accessToken, refreshToken, profile, cb) {
-    db.findOrCreate(profile.provider, profile, function(user) {
-      cb(null, user)
+    fetch("https://api.github.com/user/emails", {
+						headers: {
+              Accept: "application/json",
+							Authorization: `token ${accessToken}`,
+						},
+		}).then(res => res.json()).then(res => {
+      let filtered = res.reduce((a, o) => (o.primary && a.push(o.email), a), [])      
+      profile.email = filtered[0]
+    }).then (h => {
+      db.findOrCreate(profile.provider, profile, function(user) {
+        cb(null, user)
+      })
     })
+    
   }
 ));
 passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_CONSUMER_KEY,
     consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-    callbackURL: "https://skelly.xyz/callbacktwitter"
+    callbackURL: "https://skelly.xyz/callbacktwitter",
+    userProfileURL  : 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true',
   },
   function(token, tokenSecret, profile, cb) {
     db.findOrCreate(profile.provider, profile, function(user) {
@@ -62,9 +75,18 @@ passport.use(new RedditStrategy({
     scope: ["identity"]
   },
   function(accessToken, refreshToken, profile, done) {
-    db.findOrCreate(profile.provider, profile, function(user) {
-      done(null, user)
+    db.exists(profile, function(exists) {
+      if(exists) {
+        db.findOrCreate(profile.provider, profile, function(user) {
+          done(null, user)
+        })
+      } else {
+        process.nextTick(function() {
+          done(null, profile)
+        })
+      }
     })
+    
   }
 ));
 passport.use(new StackExchangeStrategy({
@@ -76,8 +98,8 @@ passport.use(new StackExchangeStrategy({
     site: 'stackoverflow'
   },
   function(accessToken, refreshToken, profile, done) {
-    db.findOrCreate(profile.provider, profile, function(user) {
-      done(null, user)
+    process.nextTick(function() {
+      done(null, profile)
     })
   }
 ));
@@ -143,19 +165,30 @@ app.get('/logout', function(req, res) {
 app.get('/info', checkAuth, function(req, res) {
     //console.log(req.user)
     res.json(req.user);
-    db.findOrCreate(req.user.provider, req.user)
+    //db.findOrCreate(req.user.provider, req.user)
 
 });
 app.get('/addEmail', checkAuth, function(req, res) {
   //console.log(req.user)
-  res.sendFile(__dirname + '/public/addEmail.html');
   
+  db.hasEmail(req.user, function(resBool) {
+    console.log(resBool)
+    if(resBool) {
+      res.redirect("/info")
+    } else {
+      res.sendFile(__dirname + '/public/addEmail.html');
+    }
+  });
 });
 
 app.post('/addEmail', checkAuth, function(req, res) {
-  console.log(req.body);
+  
   req.user.email = req.body.email;
-  res.redirect('/info')
+  db.findOrCreate(req.user.provider, req.user, function(user) {
+    req.session.passport.user = user
+    res.redirect('/loginReddit')
+  });
+  
   
 })
 
