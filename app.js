@@ -27,9 +27,9 @@ passport.use(new DiscordStrategy({
     scope: scopes,
     prompt: prompt
 }, function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function() {
-        return done(null, profile);
-    });
+  db.findOrCreate(profile.provider, profile, function(user) {
+    done(null, user)
+  })
 }));
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
@@ -38,9 +38,9 @@ passport.use(new GitHubStrategy({
     scope: ["user:email"]
   },
   function(accessToken, refreshToken, profile, cb) {
-    process.nextTick(function() {
-      return cb(null, profile)
-    });
+    db.findOrCreate(profile.provider, profile, function(user) {
+      cb(null, user)
+    })
   }
 ));
 passport.use(new TwitterStrategy({
@@ -49,9 +49,9 @@ passport.use(new TwitterStrategy({
     callbackURL: "https://skelly.xyz/callbacktwitter"
   },
   function(token, tokenSecret, profile, cb) {
-    process.nextTick(function() {
-        return cb(null, profile)
-    });
+    db.findOrCreate(profile.provider, profile, function(user) {
+      cb(null, user)
+    })
   }
 ));
 passport.use(new RedditStrategy({
@@ -62,9 +62,9 @@ passport.use(new RedditStrategy({
     scope: ["identity"]
   },
   function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function() {
-        return done(null, profile);
-    });
+    db.findOrCreate(profile.provider, profile, function(user) {
+      done(null, user)
+    })
   }
 ));
 passport.use(new StackExchangeStrategy({
@@ -76,9 +76,9 @@ passport.use(new StackExchangeStrategy({
     site: 'stackoverflow'
   },
   function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function() {
-        return done(null, profile);
-    });
+    db.findOrCreate(profile.provider, profile, function(user) {
+      done(null, user)
+    })
   }
 ));
 passport.use(new GoogleStrategy({
@@ -89,7 +89,7 @@ passport.use(new GoogleStrategy({
   },
   function(token, tokenSecret, profile, cb) {
     
-    let h = db.findOrCreate(profile.provider, profile, function(user) {
+    db.findOrCreate(profile.provider, profile, function(user) {
       cb(null, user)
     })
   }
