@@ -78,3 +78,4 @@ typings/
 cert.pem
 chain.pem
 privkey.pem
+*.pem
