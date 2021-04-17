@@ -79,3 +79,5 @@ cert.pem
 chain.pem
 privkey.pem
 *.pem
+privkey.pem
+cert.pem
