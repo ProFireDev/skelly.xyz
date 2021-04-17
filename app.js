@@ -5,8 +5,6 @@ var express  = require('express')
   , app      = express();
 var GitHubStrategy = require('passport-github').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
-var RedditStrategy = require('passport-reddit').Strategy;
-var StackExchangeStrategy = require('passport-stack-exchange');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var db = require('./db')
 var fetch = require("node-fetch")
@@ -20,7 +18,7 @@ passport.deserializeUser(function(obj, done) {
 
 var scopes = ['identify', 'email'];
 var prompt = 'consent'
-
+app.set("view egine", "ejs")
 passport.use(new DiscordStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
@@ -67,42 +65,6 @@ passport.use(new TwitterStrategy({
     })
   }
 ));
-passport.use(new RedditStrategy({
-    clientID: process.env.REDDIT_CONSUMER_KEY,
-    clientSecret: process.env.REDDIT_CONSUMER_SECRET,
-    callbackURL: "https://skelly.xyz/callbackreddit",
-    state: "auth",
-    scope: ["identity"]
-  },
-  function(accessToken, refreshToken, profile, done) {
-    db.exists(profile, function(exists) {
-      if(exists) {
-        db.findOrCreate(profile.provider, profile, function(user) {
-          done(null, user)
-        })
-      } else {
-        process.nextTick(function() {
-          done(null, profile)
-        })
-      }
-    })
-    
-  }
-));
-passport.use(new StackExchangeStrategy({
-    clientID: process.env.STACKEXCHANGE_CLIENT_ID,
-    clientSecret: process.env.STACKEXCHANGE_CLIENT_SECRET,
-    callbackURL: 'https://skelly.xyz/callbackstackexchange',
-    stackAppsKey: process.env.STACKEXCHANGE_APPS_KEY,
-    scope: ["private_info"],
-    site: 'stackoverflow'
-  },
-  function(accessToken, refreshToken, profile, done) {
-    process.nextTick(function() {
-      done(null, profile)
-    })
-  }
-));
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -127,18 +89,17 @@ app.use(express.static('public/'))
 app.use(express.urlencoded({extended:true}));
 
 app.get('/login', function(req, res) {
-    res.sendFile(__dirname + '/public/login.html');
+    res.render(__dirname + '/public/login.ejs');
 });
 
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/public/index.html');
+  res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user.primaryEmail});
 });
+
 
 app.get('/loginDiscord', passport.authenticate('discord', { scope: scopes, prompt: prompt }), function(req, res) {});
 app.get('/loginGithub', passport.authenticate('github'), function(req, res) {});
 app.get('/loginTwitter', passport.authenticate('twitter'), function(req, res) {});
-app.get('/loginReddit', passport.authenticate('reddit'), function(req, res) {});
-app.get('/loginStackExchange', passport.authenticate('stack-exchange'), function(req, res) {});
 app.get('/loginGoogle', passport.authenticate('google'), function(req, res) {});
 app.get('/callbackdiscord',
     passport.authenticate('discord', { failureRedirect: '/' }), function(req, res) { res.redirect('/info') } // auth success
@@ -148,12 +109,6 @@ app.get('/callbackgithub',
 );
 app.get('/callbacktwitter',
     passport.authenticate('twitter', { failureRedirect: '/' }), function(req, res) { res.redirect('/info') } // auth success
-);
-app.get('/callbackreddit',
-passport.authenticate('reddit', { failureRedirect: '/' }), function(req, res) { res.redirect('/addEmail') } // auth success
-);
-app.get('/callbackstackexchange',
-passport.authenticate('stack-exchange', { failureRedirect: '/' }), function(req, res) { res.redirect('/addEmail') } // auth success
 );
 app.get('/callbackgoogle',
     passport.authenticate('google', { failureRedirect: '/' }), function(req, res) { res.redirect('/info') } // auth success
@@ -168,30 +123,6 @@ app.get('/info', checkAuth, function(req, res) {
     //db.findOrCreate(req.user.provider, req.user)
 
 });
-app.get('/addEmail', checkAuth, function(req, res) {
-  //console.log(req.user)
-  
-  db.hasEmail(req.user, function(resBool) {
-    console.log(resBool)
-    if(resBool) {
-      res.redirect("/info")
-    } else {
-      res.sendFile(__dirname + '/public/addEmail.html');
-    }
-  });
-});
-
-app.post('/addEmail', checkAuth, function(req, res) {
-  
-  req.user.email = req.body.email;
-  db.findOrCreate(req.user.provider, req.user, function(user) {
-    req.session.passport.user = user
-    res.redirect('/loginReddit')
-  });
-  
-  
-})
-
 
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
