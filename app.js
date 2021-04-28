@@ -91,8 +91,12 @@ app.use(express.urlencoded({extended:true}));
 app.get('/login', function(req, res) {
     res.render(__dirname + '/public/login.ejs');
 });
+app.get("/index", (req, res) => {
+  res.send("Hello world")
+})
 
 app.get('/', function(req, res) {
+  console.log(req.user.primaryEmail)
   res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user.primaryEmail});
 });
 
