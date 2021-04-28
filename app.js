@@ -85,19 +85,41 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static('public/'))
+app.use("/resources", express.static('public/resources'))
+app.use("/.well-known", express.static('public/.well-known'))
 app.use(express.urlencoded({extended:true}));
 
 app.get('/login', function(req, res) {
-    res.render(__dirname + '/public/login.ejs');
+  if(req.user) {
+    console.log(req.user)
+    if(req.user.primaryEmail) {
+      res.render(__dirname + '/public/login.ejs', {primaryEmail: req.user.primaryEmail});
+    } else {
+      if(req.user[0].primaryEmail) {
+        res.render(__dirname + '/public/login.ejs', {primaryEmail: req.user[0].primaryEmail});
+      }
+    }
+    } else {
+      res.render(__dirname + '/public/login.ejs', {primaryEmail: ""})
+    }
 });
 app.get("/index", (req, res) => {
   res.send("Hello world")
 })
 
 app.get('/', function(req, res) {
-  console.log(req.user.primaryEmail)
-  res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user.primaryEmail});
+  if(req.user) {
+  console.log(req.user)
+  if(req.user.primaryEmail) {
+    res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user.primaryEmail});
+  } else {
+    if(req.user[0].primaryEmail) {
+      res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user[0].primaryEmail});
+    }
+  }
+  } else {
+    res.render(__dirname + '/public/index.ejs', {primaryEmail: ""})
+  }
 });
 
 
@@ -122,8 +144,8 @@ app.get('/logout', function(req, res) {
     res.redirect('/');
 });
 app.get('/info', checkAuth, function(req, res) {
-    //console.log(req.user)
-    res.json(req.user);
+    //console.log(req.user
+    res.redirect("/")
     //db.findOrCreate(req.user.provider, req.user)
 
 });

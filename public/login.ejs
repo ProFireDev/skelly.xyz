@@ -21,7 +21,11 @@
                     <!-- <li class="pr-5"><a> Services </a></li>
                     <li class="pr-5"><a>Porfolio</a></li>
                     <li class="pr-5"><a>About</a></li> -->
+                    <% if(primaryEmail != "") { %>
+                <li class="pr-5"><a><%= primaryEmail%></a></li>
+                <% } else {%>
                     <li><a href="/login">Log In</a></li>
+                <% } %>
                 </ul>
             </nav>
         </div>
