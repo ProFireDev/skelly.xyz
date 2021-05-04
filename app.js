@@ -3,6 +3,7 @@ var express  = require('express')
   , passport = require('passport')
   , DiscordStrategy = require('passport-discord').Strategy
   , app      = express();
+const crypto = require("crypto");
 var GitHubStrategy = require('passport-github').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -93,10 +94,10 @@ app.get('/login', function(req, res) {
   if(req.user) {
     console.log(req.user)
     if(req.user.primaryEmail) {
-      res.render(__dirname + '/public/login.ejs', {primaryEmail: req.user.primaryEmail});
+      res.render(__dirname + '/public/login.ejs', {primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
     } else {
       if(req.user[0].primaryEmail) {
-        res.render(__dirname + '/public/login.ejs', {primaryEmail: req.user[0].primaryEmail});
+        res.render(__dirname + '/public/login.ejs', {primaryEmail: req.user[0].primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
       }
     }
     } else {
@@ -111,15 +112,15 @@ app.get('/', function(req, res) {
   if(req.user) {
   console.log(req.user)
   if(req.user.primaryEmail) {
-    res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user.primaryEmail});
-  } else {
-    if(req.user[0].primaryEmail) {
-      res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user[0].primaryEmail});
+    res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
+    } else {
+      if(req.user[0].primaryEmail) {
+        res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user[0].primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
+      }
     }
-  }
-  } else {
-    res.render(__dirname + '/public/index.ejs', {primaryEmail: ""})
-  }
+    } else {
+      res.render(__dirname + '/public/index.ejs', {primaryEmail: ""})
+    }
 });
 
 

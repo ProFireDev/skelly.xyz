@@ -23,6 +23,7 @@
                     <li class="pr-5"><a>About</a></li> -->
                     <% if(primaryEmail != "") { %>
                 <li class="pr-5"><a><%= primaryEmail%></a></li>
+                <li class=""><img class="max-h-5 rounded" src="https://www.gravatar.com/avatar/<%= gravatarHash%>"/></li>
                 <% } else {%>
                     <li><a href="/login">Log In</a></li>
                 <% } %>
