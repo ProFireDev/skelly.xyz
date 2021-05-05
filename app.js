@@ -101,12 +101,27 @@ app.get('/login', function(req, res) {
       }
     }
     } else {
-      res.render(__dirname + '/public/login.ejs', {primaryEmail: ""})
+      res.render(__dirname + '/public/login.ejs', {primaryEmail: "", gravatarHash: ""})
     }
 });
 app.get("/index", (req, res) => {
   res.send("Hello world")
 })
+
+app.get("/profile", checkAuth, function (req, res) {
+  if(req.user) {
+    console.log(req.user)
+    if(req.user.primaryEmail) {
+      res.render(__dirname + '/public/profile.ejs', {primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
+      } else {
+        if(req.user[0].primaryEmail) {
+          res.render(__dirname + '/public/profile.ejs', {primaryEmail: req.user[0].primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
+        }
+      }
+      } else {
+        res.render(__dirname + '/public/profile.ejs', {primaryEmail: ""})
+      }
+});
 
 app.get('/', function(req, res) {
   if(req.user) {
@@ -153,7 +168,7 @@ app.get('/info', checkAuth, function(req, res) {
 
 function checkAuth(req, res, next) {
     if (req.isAuthenticated()) return next();
-    res.send('not logged in :(');
+    res.redirect("/login")
 }
 
 

@@ -22,9 +22,16 @@
                     <li class="pr-5"><a>Porfolio</a></li>
                     <li class="pr-5"><a>About</a></li> -->
                     <% if(primaryEmail != "") { %>
-                <li class="pr-5"><a><%= primaryEmail%></a></li>
-                <li class=""><img class="max-h-5 rounded" src="https://www.gravatar.com/avatar/<%= gravatarHash%>"/></li>
-                <% } else {%>
+                        <div class="dropdown">
+                
+                            <li class="pr-5"><a><%= primaryEmail%></a></li>
+                            <li class=""><img class="max-h-5 rounded" src="https://www.gravatar.com/avatar/<%= gravatarHash%>"/></li>
+                            <div class="dropdown-content text-white">
+                              <a class="text-white" href="profile">Profile</a>
+                              <a class="text-white" href="logout">Log Out</a>
+                            </div>
+                          </div>
+                         <% } else {%>
                     <li><a href="/login">Log In</a></li>
                 <% } %>
                 </ul>
