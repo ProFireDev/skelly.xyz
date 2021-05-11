@@ -20,7 +20,8 @@ db.once('open', function() {
     Patron: Boolean,
     Salad: Boolean,
     LinkedAccounts: Array,
-    tokens: Object
+    tokens: Object,
+    username: String
   });
   User = mongoose.model('User', userSchema);
 });
@@ -29,13 +30,9 @@ db.once('open', function() {
 function findOrCreate(service, profile, callback) {
     switch (service) {
         case "google":
-            console.log("google")
-            console.log(profile.id);
             User.countDocuments({googleId:profile.id},function(err, res){
                 if (res) {
-                    console.log("User Exists")
                     return User.find({googleId:profile.id}, function(err, user) {
-                        console.log(user)
                         if(!err) callback(user)
                         if(err) console.log(err)
                     })
@@ -44,7 +41,8 @@ function findOrCreate(service, profile, callback) {
                         googleId:profile.id,
                         googleEmail:profile.emails[0].value,
                         primaryEmail:profile.emails[0].value,
-                        LinkedAccounts: ["google"]
+                        LinkedAccounts: ["google"],
+                        username:profile.emails[0].value
                     })
                     user.save(function (err, user) {
                         if (err) return console.error(err);
@@ -54,13 +52,9 @@ function findOrCreate(service, profile, callback) {
             })
         break;
         case "twitter":
-            console.log("twitter")
-            console.log(profile.id);
             User.countDocuments({twitterId:profile.id},function(err, res){
                 if (res) {
-                    console.log("User Exists")
                     return User.find({twitterId:profile.id}, function(err, user) {
-                        console.log(user)
                         if(!err) callback(user)
                         if(err) console.log(err)
                     })
@@ -69,7 +63,8 @@ function findOrCreate(service, profile, callback) {
                         twitterId:profile.id,
                         twitterEmail:profile.emails[0].value,
                         primaryEmail:profile.emails[0].value,
-                        LinkedAccounts: ["twitter"]
+                        LinkedAccounts: ["twitter"],
+                        username:profile.emails[0].value
                     })
                     user.save(function (err, user) {
                         if (err) return console.error(err);
@@ -79,13 +74,9 @@ function findOrCreate(service, profile, callback) {
             })
         break;
         case "github":
-            console.log("github")
-            console.log(profile.id);
             User.countDocuments({githubId:profile.id},function(err, res){
                 if (res) {
-                    console.log("User Exists")
                     return User.find({githubId:profile.id}, function(err, user) {
-                        console.log(user)
                         if(!err) callback(user)
                         if(err) console.log(err)
                     })
@@ -94,7 +85,8 @@ function findOrCreate(service, profile, callback) {
                         githubId:profile.id,
                         githubEmail:profile.email,
                         primaryEmail:profile.email,
-                        LinkedAccounts: ["github"]
+                        LinkedAccounts: ["github"],
+                        username:profile.email
                     })
                     user.save(function (err, user) {
                         if (err) return console.error(err);
@@ -104,14 +96,9 @@ function findOrCreate(service, profile, callback) {
             })
         break;
         case "discord":
-            console.log("discord")
-            console.log(profile.id);
-            
             User.countDocuments({discordId:profile.id},function(err, res){
                 if (res) {
-                    console.log("User Exists")
                     return User.find({discordId:profile.id}, function(err, user) {
-                        console.log(user)
                         if(!err) callback(user)
                         if(err) console.log(err)
                     })
@@ -120,7 +107,8 @@ function findOrCreate(service, profile, callback) {
                         discordId:profile.id,
                         discordEmail:profile.email,
                         primaryEmail:profile.email,
-                        LinkedAccounts: ["discord"]
+                        LinkedAccounts: ["discord"],
+                        username:profile.email
                     })
                     user.save(function (err, user) {
                         if (err) return console.error(err);
@@ -131,6 +119,11 @@ function findOrCreate(service, profile, callback) {
     }
 }
 
+function changeUsername(user, newUsername) {
+    User.findOneAndUpdate({googleId:user.googleId},{username: newUsername})
+}
+
 module.exports = {
-    findOrCreate: findOrCreate
+    findOrCreate: findOrCreate,
+    changeUsername: changeUsername
 }

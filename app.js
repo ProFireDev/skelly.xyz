@@ -92,7 +92,6 @@ app.use(express.urlencoded({extended:true}));
 
 app.get('/login', function(req, res) {
   if(req.user) {
-    console.log(req.user)
     if(req.user.primaryEmail) {
       res.render(__dirname + '/public/login.ejs', {primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
     } else {
@@ -110,22 +109,38 @@ app.get("/index", (req, res) => {
 
 app.get("/profile", checkAuth, function (req, res) {
   if(req.user) {
-    console.log(req.user)
     if(req.user.primaryEmail) {
-      res.render(__dirname + '/public/profile.ejs', {primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
+      res.render(__dirname + '/public/profile.ejs', {linkedAccounts: req.user.LinkedAccounts, username: req.user.username, primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
       } else {
         if(req.user[0].primaryEmail) {
-          res.render(__dirname + '/public/profile.ejs', {primaryEmail: req.user[0].primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
+          res.render(__dirname + '/public/profile.ejs', {linkedAccounts: req.user[0].LinkedAccounts, username: req.user[0].username, primaryEmail: req.user[0].primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
         }
       }
-      } else {
-        res.render(__dirname + '/public/profile.ejs', {primaryEmail: ""})
       }
 });
 
+app.get("/editProfile", checkAuth, function (req, res) { 
+  
+  if(req.user.primaryEmail) {
+    res.render(__dirname + '/public/editProfile.ejs', {primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
+    } else {
+      if(req.user[0].primaryEmail) {
+        res.render(__dirname + '/public/editProfile.ejs', {primaryEmail: req.user[0].primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
+      }
+    }
+})
+
+app.post("/editProfile", checkAuth, function(req, res) {
+    console.log(req.body);
+    console.log("------")
+    console.log(req.user)
+    console.log("------")
+    db.changeUsername(req.user, req.body.username)
+    res.redirect("/profile")
+})
+
 app.get('/', function(req, res) {
   if(req.user) {
-  console.log(req.user)
   if(req.user.primaryEmail) {
     res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
     } else {
