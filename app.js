@@ -81,8 +81,8 @@ passport.use(new GoogleStrategy({
 ));
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false
+    resave: true,
+    saveUninitialized: true
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -93,14 +93,14 @@ app.use(express.urlencoded({extended:true}));
 app.get('/login', function(req, res) {
   if(req.user) {
     if(req.user.primaryEmail) {
-      res.render(__dirname + '/public/login.ejs', {primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
+      res.render(__dirname + '/public/login.ejs', {username: req.user.username, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
     } else {
       if(req.user[0].primaryEmail) {
-        res.render(__dirname + '/public/login.ejs', {primaryEmail: req.user[0].primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
+        res.render(__dirname + '/public/login.ejs', {username: req.user[0].username, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
       }
     }
     } else {
-      res.render(__dirname + '/public/login.ejs', {primaryEmail: "", gravatarHash: ""})
+      res.render(__dirname + '/public/login.ejs', {username: "", gravatarHash: ""})
     }
 });
 app.get("/index", (req, res) => {
@@ -110,6 +110,7 @@ app.get("/index", (req, res) => {
 app.get("/profile", checkAuth, function (req, res) {
   if(req.user) {
     if(req.user.primaryEmail) {
+      
       res.render(__dirname + '/public/profile.ejs', {linkedAccounts: req.user.LinkedAccounts, username: req.user.username, primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
       } else {
         if(req.user[0].primaryEmail) {
@@ -122,34 +123,31 @@ app.get("/profile", checkAuth, function (req, res) {
 app.get("/editProfile", checkAuth, function (req, res) { 
   
   if(req.user.primaryEmail) {
-    res.render(__dirname + '/public/editProfile.ejs', {primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
+    res.render(__dirname + '/public/editProfile.ejs', {username: req.user.username, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
     } else {
       if(req.user[0].primaryEmail) {
-        res.render(__dirname + '/public/editProfile.ejs', {primaryEmail: req.user[0].primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
+        res.render(__dirname + '/public/editProfile.ejs', {username: req.user[0].username, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
       }
     }
 })
 
 app.post("/editProfile", checkAuth, function(req, res) {
-    console.log(req.body);
-    console.log("------")
-    console.log(req.user)
-    console.log("------")
     db.changeUsername(req.user, req.body.username)
+    
     res.redirect("/profile")
 })
 
 app.get('/', function(req, res) {
   if(req.user) {
-  if(req.user.primaryEmail) {
-    res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user.primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
+  if(req.user.username) {
+    res.render(__dirname + '/public/index.ejs', {username: req.user.username, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
     } else {
       if(req.user[0].primaryEmail) {
-        res.render(__dirname + '/public/index.ejs', {primaryEmail: req.user[0].primaryEmail, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
+        res.render(__dirname + '/public/index.ejs', {username: req.user[0].username, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
       }
     }
     } else {
-      res.render(__dirname + '/public/index.ejs', {primaryEmail: ""})
+      res.render(__dirname + '/public/index.ejs', {username: ""})
     }
 });
 

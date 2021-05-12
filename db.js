@@ -120,7 +120,19 @@ function findOrCreate(service, profile, callback) {
 }
 
 function changeUsername(user, newUsername) {
-    User.findOneAndUpdate({googleId:user.googleId},{username: newUsername})
+    if (user._id) {
+    User.findById({_id: user._id}, function (err, doc) {
+        if(err) throw err;
+        doc.username = newUsername
+        doc.save()
+    })
+} else {
+    User.findById({_id: user[0]._id}, function (err, doc) {
+        if(err) throw err;
+        doc.username = newUsername
+        doc.save()
+    })
+}
 }
 
 module.exports = {
