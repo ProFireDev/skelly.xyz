@@ -31221,9 +31221,10 @@ video {
 .dropdown-content {
   display: none;
   color:white;
+  right: 0;
   position: absolute;
   background-color: #08002e;
-  transform: translate(0px, 25px);
+  transform: translate(-5px, 22px);
   min-width: 160px;
   border-radius: 5px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);

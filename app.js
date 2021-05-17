@@ -132,8 +132,9 @@ app.get("/editProfile", checkAuth, function (req, res) {
 })
 
 app.post("/editProfile", checkAuth, function(req, res) {
-    db.changeUsername(req.user, req.body.username)
-    
+    if(req.body.username != "") {
+      db.changeUsername(req.user, req.body.username)
+    }
     res.redirect("/profile")
 })
 
