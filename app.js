@@ -138,6 +138,17 @@ app.post("/editProfile", checkAuth, function(req, res) {
     res.redirect("/profile")
 })
 
+app.get("/linkAccounts", checkAuth, function (req, res) { 
+  
+  if(req.user.primaryEmail) {
+    res.render(__dirname + '/public/linkAccounts.ejs', {linkedAccounts: req.user.LinkedAccounts, username: req.user.username, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
+    } else {
+      if(req.user[0].primaryEmail) {
+        res.render(__dirname + '/public/linkAccounts.ejs', {linkedAccounts: req.user[0].LinkedAccounts, username: req.user[0].username, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
+      }
+    }
+})
+
 app.get('/', function(req, res) {
   if(req.user) {
   if(req.user.username) {
