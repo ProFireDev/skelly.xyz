@@ -39,15 +39,15 @@
         </ul>
     </nav>
 </div>
-    <div class="flex py-10 px-10 ">
+    <div class=" py-10 px-10 ">
     
+        <img class="max-h-50 rounded float-left" src="https://www.gravatar.com/avatar/<%= gravatarHash%>"/>
         <div class="bg-gray-900 rounded-lg p-5">
             <div class="inline-block">
-            <img class="max-h-50 rounded float-left" src="https://www.gravatar.com/avatar/<%= gravatarHash%>"/>
-            <a href="/editProfile"><p class="float-right pl-5 hover:bg-gray-800"><%= username %><i class="fa pl-3 s fa-edit"></i></p></a> <br>
-            <p class="float-right pl-5 text-gray-400"><%= primaryEmail %></p> <br>
+            <a href="/editProfile"><p class=" pl-5 hover:bg-gray-800"><%= username %><i class="fa pl-3 s fa-edit"></i></p></a> <br>
+            <p class=" pl-5 text-gray-400"><%= primaryEmail %></p> <br>
 
-            <% if(linkedAccounts.includes("github")) { %><i class="fab pl-5 fa-github"></i><% } if(linkedAccounts.includes("google")) { %><i class="fab pl-3 fa-google"></i><% } if(linkedAccounts.includes("twitter")) { %><i class="fab pl-3 fa-twitter"></i><% } if(linkedAccounts.includes("discord")) { %><i class="fab pl-3 fa-discord"></i><% } if(linkedAccounts.length != 4) { %><i class="fas pl-3 fa-plus-circle"></i> <% } %>
+            <% if(linkedAccounts.includes("github")) { %><i class="fab pl-5 fa-github"></i><% } if(linkedAccounts.includes("google")) { %><i class="fab pl-3 fa-google"></i><% } if(linkedAccounts.includes("twitter")) { %><i class="fab pl-3 fa-twitter"></i><% } if(linkedAccounts.includes("discord")) { %><i class="fab pl-3 fa-discord"></i><% } if(linkedAccounts.length == 4) { %><i class="fas pl-3 fa-plus-circle"></i> <% } %>
         </div>
         </div>
         

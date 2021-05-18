@@ -38,5 +38,13 @@
         </ul>
     </nav>
 </div>
+<% if(user != null) { %>
+  <% if (user.primaryEmail.includes("koulu.raahe.fi")) { %>
+    <a href="https://github.com/vtheskeleton/skelly.xyz"><button class="button button-blue">Lähdekoodi</button></a>
+  <% } %>
+  <% if (user.VCP) { %>
+    <a href="https://nyom.ga"><button class="button button-blue">nyom</button></a>
+  <% } %>
+<% } %>
 </body>
 </html>

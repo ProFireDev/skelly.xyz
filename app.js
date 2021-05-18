@@ -27,9 +27,27 @@ passport.use(new DiscordStrategy({
     scope: scopes,
     prompt: prompt
 }, function(accessToken, refreshToken, profile, done) {
-  db.findOrCreate(profile.provider, profile, function(user) {
-    done(null, user)
-  })
+  
+  fetch("https://discord.com/api/users/@me/guilds", {
+        method: 'get',
+        headers: { 
+          Authorization: `Bearer ${accessToken}` 
+        },
+    })
+    .then(res => res.json())
+    .then(json => {
+      if(json.filter(server => (server.id == "719496895449530439")).length > 0) {
+        profile.VCP = true;
+        db.findOrCreate(profile.provider, profile, function(user) {
+          done(null, user)
+        })
+      } else {
+        db.findOrCreate(profile.provider, profile, function(user) {
+          done(null, user)
+        })
+      }
+    })
+  
 }));
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
@@ -152,14 +170,14 @@ app.get("/linkAccounts", checkAuth, function (req, res) {
 app.get('/', function(req, res) {
   if(req.user) {
   if(req.user.username) {
-    res.render(__dirname + '/public/index.ejs', {username: req.user.username, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
+    res.render(__dirname + '/public/index.ejs', {user: req.user, username: req.user.username, gravatarHash: crypto.createHash("md5").update(req.user.primaryEmail.toLowerCase()).digest("hex")});
     } else {
       if(req.user[0].primaryEmail) {
-        res.render(__dirname + '/public/index.ejs', {username: req.user[0].username, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
+        res.render(__dirname + '/public/index.ejs', {user: req.user[0], username: req.user[0].username, gravatarHash: crypto.createHash("md5").update(req.user[0].primaryEmail.toLowerCase()).digest("hex")});
       }
     }
     } else {
-      res.render(__dirname + '/public/index.ejs', {username: ""})
+      res.render(__dirname + '/public/index.ejs', {user: null, username: ""})
     }
 });
 

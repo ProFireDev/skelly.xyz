@@ -98,9 +98,12 @@ function findOrCreate(service, profile, callback) {
         case "discord":
             User.countDocuments({discordId:profile.id},function(err, res){
                 if (res) {
-                    return User.find({discordId:profile.id}, function(err, user) {
-                        if(!err) callback(user)
-                        if(err) console.log(err)
+                    User.findOne({discordId:profile.id}, function (err, doc) {
+                        if(err) throw err;
+                        doc.VCP = profile.VCP;
+                        doc.save().then(savedDoc => {
+                            return callback(savedDoc)
+                          });
                     })
                 } else {
                     let user = new User({
@@ -108,7 +111,8 @@ function findOrCreate(service, profile, callback) {
                         discordEmail:profile.email,
                         primaryEmail:profile.email,
                         LinkedAccounts: ["discord"],
-                        username:profile.email
+                        username:profile.email,
+                        VCP: profile.VCP
                     })
                     user.save(function (err, user) {
                         if (err) return console.error(err);
@@ -135,7 +139,17 @@ function changeUsername(user, newUsername) {
 }
 }
 
+function addVCP(user) {
+
+}
+
+function addSalad(user) {
+
+}
+
 module.exports = {
     findOrCreate: findOrCreate,
-    changeUsername: changeUsername
+    changeUsername: changeUsername,
+    addVCP: addVCP,
+    addSalad: addSalad
 }
