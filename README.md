@@ -2,7 +2,7 @@
 
 ## woo
 
-We're coming for you Facebook
+voop
 
 
 # !! This repository contains [Vukmoji](https://github.com/Vukky123/vukmoji) !!
